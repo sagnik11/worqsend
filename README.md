@@ -1,182 +1,356 @@
-# WorqSend
+# Introduction
 
-WorqSend is a free, open-source app that allows you to securely share files and messages with nearby devices over your local network, without needing an internet connection.
+WorqSend employs a highly secure communication protocol, facilitating seamless device-to-device interaction through a REST API. The transmission of data occurs exclusively over HTTPS, guaranteeing a robust layer of protection. Notably, the TLS/SSL certificate dynamically generates on each device, reinforcing the utmost level of security.
 
-[![CI status][ci-badge]][ci-workflow]
+The primary objective of the file sharing app is to establish a simple and self-contained REST protocol that operates independently without relying on external servers. Given the inherent complexity of computer networks, it is crucial to account for potential limitations in network capabilities. Not all devices may support multicast functionality, and certain devices might be restricted from running an HTTP server.
 
-[ci-badge]: https://github.com/WorqSend/WorqSend/actions/workflows/ci.yml/badge.svg
-[ci-workflow]: https://github.com/WorqSend/WorqSend/actions/workflows/ci.yml
+To address these challenges, the protocol employs a clever approach by incorporating multiple methods for both discovery and file transfer among WorqSend members. By leveraging diverse techniques, the protocol aims to ensure that file sharing remains accessible and effective across a wide range of network configurations.
 
-Links: [Homepage](https://WorqSend.org)
+The protocol operates on the principle that only one participant needs to establish an HTTP server, which serves as a key component of the file sharing process. This HTTP server facilitates seamless communication and enables the exchange of files between connected users. By reducing the reliance on external servers and leveraging internal resources, the protocol promotes a decentralized and resilient approach to file sharing.
 
-- [About](#about)
-- [Screenshots](#screenshots)
-- [Download](#download)
-- [How it Works](#how-it-works)
-- [Getting Started](#getting-started)
-- [Contributing](#contributing)
-  - [Translation](#translation)
-  - [Bug fixes and improvements](#bug-fixes-and-improvements)
-- [Building](#building)
-  - [Android](#android)
-  - [iOS](#ios)
-  - [macOS](#macos)
-  - [Windows](#windows)
-  - [Linux](#linux)
+Furthermore, the file sharing app emphasizes security by ensuring that all data is transmitted securely over HTTPS. To enhance the level of protection, the app generates a unique TLS/SSL certificate on the fly for each device involved in the file sharing process. This dynamic certificate generation approach enhances security by ensuring that each communication session has a distinct and temporary certificate.
 
-## About
+By adopting this approach, the app maximizes the security of file transfers, reducing the risk of unauthorized access and data interception. The on-the-fly certificate generation strategy adds an additional layer of protection by eliminating the potential vulnerabilities associated with sharing and reusing static certificates. Users can have confidence that their files are being transmitted with the highest level of encryption and integrity, reinforcing the overall security of the file sharing protocol.
 
-WorqSend is a cross-platform app that enables secure communication between devices using a REST API and HTTPS encryption. Unlike other messaging apps that rely on external servers, WorqSend doesn't require an internet connection or third-party servers, making it a fast and reliable solution for local communication.
+## Default Values and Settings
 
-## Screenshots
+WorqSend offers a flexible configuration approach that allows users to adapt the app to their specific network environment. The app does not require a fixed port or multicast address but instead provides a default configuration for seamless operation.
 
-<img src="https://WorqSend.org/img/screenshot-iphone.webp" alt="iPhone screenshot" height="300"/> <img src="https://WorqSend.org/img/screenshot-pc.webp" alt="PC screenshot" height="300"/>
+In cases where the default port or address is unavailable or blocked, WorqSend allows users to modify these settings within the app. This ensures that users can overcome any restrictions imposed by their network setup and still enjoy the benefits of the file sharing protocol.
 
-## Download
+By default, WorqSend employs the multicast (UDP) method for efficient communication. The default multicast group used is 224.0.0.0/24, as certain Android devices may reject other multicast groups. This selection ensures compatibility across a wide range of devices and avoids potential connectivity issues.
 
-It is recommended to download the app either from an app store or from a package manager because the app does not have auto-update.
+For multicast communication, WorqSend utilizes port 53317, allowing devices within the network to discover and connect with each other seamlessly. Additionally, the app employs HTTP (TCP) for file transfers, utilizing port 53317 for reliable and secure data exchange between connected devices.
 
-| Windows                  | macOS                   | Linux              | Andoid         | iOS           | Fire OS    |
-|--------------------------|-------------------------|--------------------|----------------|---------------|------------|
-| [Winget][]               | [App Store][]           | [Flathub][]        | [Play Store][] | [App Store][] | [Amazon][] |
-| [Scoop][]                | [Homebrew][]            | [AUR][]            | [F-Droid][]    |               |            |
-| [Chocolatey][]           | [DMG Installer][latest] | [AppImage][latest] | [APK][latest]  |               |            |
-| [MSIX Installer][latest] |                         |                    |                |               |            |
-| [Portable ZIP][latest]   |                         |                    |                |               |            |
+## Device Fingerprints for Security
 
-Read more about [distribution channels][].
+To enhance security and facilitate device recognition, WorqSend utilizes fingerprints. These fingerprints serve two primary purposes: preventing self-discovery and enabling device identification and recognition.
 
-[windows store]: https://www.microsoft.com/store/apps/9NCB4Z0TZ6RR
-[app store]: https://apps.apple.com/us/app/WorqSend/id1661733229
-[play store]: https://play.google.com/store/apps/details?id=org.WorqSend.WorqSend_app
-[f-droid]: https://f-droid.org/packages/org.WorqSend.WorqSend_app
-[amazon]: https://www.amazon.com/dp/B0BW6MP732
-[winget]: https://github.com/microsoft/winget-pkgs/tree/master/manifests/l/WorqSend/WorqSend
-[scoop]: https://scoop.sh/#/apps?s=0&d=1&o=true&q=WorqSend&id=fb88113be361ca32c0dcac423cb4afdeda0b0c66
-[chocolatey]: https://community.chocolatey.org/packages/WorqSend
-[homebrew]: https://github.com/WorqSend/homebrew-WorqSend
-[flathub]: https://flathub.org/apps/details/org.WorqSend.WorqSend_app
-[aur]: https://aur.archlinux.org/packages/WorqSend-bin
-[latest]: https://github.com/WorqSend/WorqSend/releases/latest
-[distribution channels]: https://github.com/WorqSend/WorqSend/blob/main/CONTRIBUTING.md#distribution
+When encryption is enabled, and communication occurs over HTTPS, WorqSend generates the fingerprint by calculating the SHA-256 hash of the device's certificate. This approach ensures that each device has a unique and verifiable fingerprint based on its certificate. By using a cryptographic hash function, WorqSend guarantees the integrity and non-repudiation of the fingerprint, providing a reliable means of identifying and verifying devices during encrypted communication.
 
-## How it Works
+On the other hand, when encryption is disabled, and communication takes place over HTTP, WorqSend generates a fingerprint using a randomly generated string. This random string serves as a unique identifier for the device, enabling device recognition and differentiation within the network. While the cryptographic strength of a certificate-based fingerprint is not present in this scenario, the random string still provides a practical and effective means of distinguishing devices during unencrypted communication.
 
-WorqSend uses a secure communication protocol that allows devices to communicate with each other using a REST API. All data is sent securely over HTTPS, and the TLS/SSL certificate is generated on the fly on each device, ensuring maximum security.
+By employing these fingerprinting techniques, WorqSend ensures that devices can be identified and remembered accurately, regardless of the encryption settings. This helps to prevent self-discovery within the network and enables efficient communication and file sharing between recognized devices.
 
-For more information on the WorqSend Protocol, see the [documentation](https://github.com/WorqSend/protocol).
+## New Receiver Announcement
 
-## Getting Started
+At the start of the app, the following message will be sent to the group that includes all the devices connected on the Same network:
 
-To start WorqSend from source code, follow these steps:
+````json
+{
+  "alias": "Cute Rabbit",
+  "version": "2.0", // protocol version 
+  "deviceModel": "Samsung", // nullable
+  "deviceType": "mobile", // mobile | desktop | web | headless | server, nullable
+  "fingerprint": "random string",
+  "port": 53317,
+  "protocol": "https", // http | https
+  "download": true, // if the auto download setting has been enabled
+  "announce": true
+}
+````
 
-1. Install [Flutter](https://flutter.dev)
-2. Clone the WorqSend repository
-3. Run `flutter pub get` to download dependencies
-4. Run `flutter pub run build_runner build -d` to generate code
-5. Run `flutter run` to start the app
+### Response
 
-## Contributing
+Other WorqSend members on the Current Network will notice this message and will reply with their respective information.
 
-We welcome contributions from anyone who is interested in helping improve WorqSend. If you'd like to contribute, there are a few ways to get involved:
+First, an HTTP/TCP request is sent to the origin:
 
-### Translation
+POST `/api/worqsend/v2/register`
 
-You can help translating this app to other languages!
+A response is only triggered when announce or visibility is true.
 
-1. Fork this repository
-2. Choose one
-   - Add missing translations in existing languages: Only update `_missing_translations_<locale>.json` in [assets/i18n][i18n]
-   - Fix existing translations: Update `strings_<locale>.i18n.json` in [assets/i18n][i18n]
-   - Add new languages: Create a new file, see also: [locale codes][].
-3. Optional: Re-run this app
-   1. Make sure you have [run](#getting-started) this app once.
-   2. Update translations via `flutter pub run slang`
-   3. Run app via `flutter run`
-4. Open a pull request
+````json
+{
+  "alias": "Secret Banana",
+  "version": "2.0",
+  "deviceModel": "Windows",
+  "deviceType": "desktop",
+  "fingerprint": "random string", // ignored in HTTPS mode
+  "port": 53317,
+  "protocol": "https",
+  "download": true, // if the download API (5.2 and 5.3) is active (optional, default: false)
+}
+````
 
-[i18n]: https://github.com/WorqSend/WorqSend/tree/main/assets/i18n
-[locale codes]: https://saimana.com/list-of-country-locale-code/
+In HTTP Mode
 
-#### _Take note:_ Fields decorated with `@` are not meant to be translated, they are not used in the app in any way, being merely informative text about the file or to give context to the translator.
+Request
 
-### Bug fixes and improvements
+````Json
+{
+  "alias": "Cute Rabbit",
+  "version": "2.0", 
+  "deviceModel": "Windows",
+  "deviceType": "desktop",
+  "fingerprint": "random string", // ignored in HTTPS mode
+  "port": 53317,
+  "protocol": "https", // http | https
+  "download": true, // if the download is active (optional, default: false)
+}
+````
 
-- **Bug Fixes:** If you find a bug, please create a pull request with a clear description of the issue and how to fix it.
-- **Improvements:** Have an idea for how to improve WorqSend? Please create an issue first, so we can discuss why the improvement is needed.
+Response
+````JSON5
+{
+  "alias": "Big Whale",
+  "version": "2.0",
+  "deviceModel": "Samsung",
+  "deviceType": "mobile",
+  "fingerprint": "random string", // ignored in HTTPS mode
+  "download": true, // if the download is active (optional, default: false)
+}
+````
 
-For more information, see the [contributing guide](https://github.com/WorqSend/WorqSend/blob/main/CONTRIBUTING.md).
+## File transfer (HTTP)
 
-## Building
+This is the default method.
 
-These commands are intended for maintainers only.
+The receiver setups the HTTP server.
 
-### Android
+The sender (i.e. HTTP client) sends files to the HTTP server.
 
-Traditional APK
+### 1 Preparation (Metadata only)
 
-```bash
-flutter build apk
+Sends only the metadata to the receiver.
+
+The receiver will decide if this request gets accepted, partially accepted or rejected.
+
+`POST /api/worqsend/v2/prepare-upload`
+
+Request
+
+```json5
+{
+  "info": {
+    "alias": "Cute Rabbit",
+    "version": "2.0",
+    "deviceModel": "Samsung", // nullable
+    "deviceType": "mobile", // mobile | desktop | web | headless | server, nullable
+    "fingerprint": "random string", // ignored in HTTPS mode
+    "port": 53317,
+    "protocol": "https", // http | https
+    "download": true, // if the download is active (optional, default: false)
+  },
+  "files": {
+    "some file id": {
+      "id": "some file id",
+      "fileName": "my image.png",
+      "size": 324242, // bytes
+      "fileType": "image/jpeg",
+      "sha256": "*sha256 hash*", // nullable
+      "preview": "*preview data*" // nullable
+    },
+    "another file id": {
+      "id": "another file id",
+      "fileName": "another image.jpg",
+      "size": 1234,
+      "fileType": "image/jpeg",
+      "sha256": "*sha256 hash*",
+      "preview": "*preview data*"
+    }
+  }
+}
 ```
 
-AppBundle for Google Play
+Response
 
-```bash
-flutter build appbundle
+```json5
+{
+  "sessionId": "mySessionId",
+  "files": {
+    "someFileId": "someFileToken",
+    "someOtherFileId": "someOtherFileToken"
+  }
+}
 ```
 
-### iOS
+Errors
 
-```bash
-flutter build ipa
+| HTTP code | Message                            |
+|-----------|------------------------------------|
+| 204       | Finished (No file transfer needed) |
+| 400       | Invalid body                       |
+| 403       | Rejected                           |
+| 500       | Unknown error by receiver          |
+ 
+### 2 Send File
+
+The file transfer.
+
+Use the `sessionId`, the `fileId` and its file-specific `token` from `/prepare-upload`.
+
+This route can be called in parallel.
+
+`POST /api/worqsend/v2/upload?sessionId=mySessionId&fileId=someFileId&token=someFileToken`
+
+Request
+
+```text
+Binary data
 ```
 
-### macOS
+Response
 
-```bash
-flutter build macos
+```text
+No body
 ```
 
-### Windows
+Errors
 
-**Traditional**
+| HTTP code | Message                     |
+|-----------|-----------------------------|
+| 400       | Missing parameters          |
+| 403       | Invalid token or IP address |
+| 409       | Blocked by another session  |
+| 500       | Unknown error by receiver   |
 
-```bash
-flutter build windows
+### 3 Cancel
+
+This route will be called when the sender wants to cancel the session.
+
+Use the `sessionId` from `/send-request`.
+
+`POST /api/worqsend/v2/cancel?sessionId=mySessionId`
+
+Response
+
+```text
+No body
 ```
 
-**Local MSIX App**
+## Reverse file transfer (HTTP)
 
-```bash
-flutter pub run msix:create
+In situations where WorqSend is not available on the receiver's device, an alternative method can be employed to facilitate file transfer. In this approach, the sender sets up an HTTP server and provides a specific URL to the receiver for downloading the file.
+
+To initiate the file transfer, the sender establishes an HTTP server that hosts the file to be shared. The sender then shares the corresponding URL with the intended receiver. The receiver, upon receiving the URL, can open a web browser and navigate to the provided address.
+
+Using the web browser, the receiver can access the HTTP server hosted by the sender and initiate the file download. The file can be downloaded directly through the browser interface, allowing for convenient and straightforward access to the shared content.
+
+It's important to note that this alternative method uses the unencrypted HTTP protocol for file transfer. This choice is made because browsers typically reject self-signed certificates, which would otherwise be necessary to establish secure HTTPS connections. Although the use of unencrypted HTTP introduces potential security considerations, it provides a practical solution for scenarios where WorqSend is not available on the receiver's device.
+
+By utilizing this sender-initiated HTTP server approach, WorqSend offers a flexible and accessible file sharing option that accommodates varying device configurations and network constraints.
+
+### 1 Browser URL
+
+The receiver can open the following URL in the browser to download the file.
+
+```text
+http://<sender-ip>:<sender-port>
 ```
 
-**Store ready**
+### 2 Receive Request (Metadata only)
 
-```bash
-flutter pub run msix:create --store
+Send to the sender a request to get a list of file metadata.
+
+The downloader may add `?sessionId=mySessionId`. In this case, the request should be accepted if it is the same session.
+
+This is needed if the user refreshes the browser page.
+
+`POST /api/worqsend/v2/prepare-download`
+
+Request
+
+```text
+No body
 ```
 
-### Linux
+Response
 
-**Traditional**
-
-```bash
-flutter build linux
+```json5
+{
+  "info": {
+    "alias": "Cute Rabbit",
+    "version": "2.0",
+    "deviceModel": "Samsung", // nullable
+    "deviceType": "mobile", // mobile | desktop | web | headless | server, nullable
+    "fingerprint": "random string", // ignored in HTTPS mode
+    "download": true, // if the download API (5.2 and 5.3) is active (optional, default: false)
+  },
+  "sessionId": "mySessionId",
+  "files": {
+    "some file id": {
+      "id": "some file id",
+      "fileName": "my image.png",
+      "size": 324242, // bytes
+      "fileType": "image/jpeg",
+      "sha256": "*sha256 hash*", // nullable
+      "preview": "*preview data*" // nullable
+    },
+    "another file id": {
+      "id": "another file id",
+      "fileName": "another image.jpg",
+      "size": 1234,
+      "fileType": "image/jpeg",
+      "sha256": "*sha256 hash*",
+      "preview": "*preview data*"
+    }
+  }
+}
 ```
 
-**AppImage**
+### 5.3 Receive File
 
-```bash
-appimage-builder --recipe AppImageBuilder.yml
+The file transfer.
+
+Use the `sessionId`, the `fileId` from `/receive-request`.
+
+This route can be called in parallel.
+
+`GET /api/worqsend/v2/download?sessionId=mySessionId&fileId=someFileId`
+
+Request
+
+```text
+No body
 ```
 
-**Snap**
+Response
 
-Feel free to open a pull request. There is a `snap` branch to play with.
+```text
+Binary data
+```
 
-## Contributors
+## 6. Additional API
 
-<a href="https://github.com/WorqSend/WorqSend/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=WorqSend/WorqSend"  alt="WorqSend Contributors"/>
-</a>
+### 1 Info
+
+This particular route provides information about the send functionality within the application. By sending a GET request to this endpoint, users can retrieve relevant details and insights related to the local send feature.
+
+However, it is important to note that this route is intended for debugging purposes only and should not be accessed or utilized in a production or public-facing environment. Exposing debugging routes in a production environment can potentially pose security risks and compromise the stability and security of the application.
+
+Therefore, this route can solely be used for debugging scenarios, where developers can leverage the provided information to diagnose and address any issues or concerns within the application's local send functionality. It can be accessed from the debugging page
+
+`GET /api/worqsend/v2/info`
+
+Response
+
+```json5
+{
+  "alias": "Cute Rabbit",
+  "version": "2.0",
+  "deviceModel": "Samsung", // nullable
+  "deviceType": "mobile", // mobile | desktop | web | headless | server, nullable
+  "fingerprint": "random string",
+  "download": true, // if the download API (5.2 and 5.3) is active (optional, default: false)
+}
+```
+
+## Enums
+
+In this project, enums are used to define the possible values of some fields.
+
+### 1 Device Type
+
+Device types are only used for UI purposes like showing an icon.
+
+There is no difference in the protocol between the different device types.
+
+| Value    | Description                               |
+|----------|-------------------------------------------|
+| mobile   | mobile device (Android, iOS, FireOS)      |
+| desktop  | desktop (Windows, macOS, Linux)           |
+| web      | web browser (Firefox, Chrome)             |
+| headless | program without GUI running on a terminal (In Development) |
+
+The implementation handle unknown values. The official implementation falls back to `desktop`.
