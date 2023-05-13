@@ -1,6 +1,6 @@
 import 'package:WorqSend_app/model/device.dart';
 
-const _basePath = '/api/localsend';
+const _basePath = '/api/worqsend';
 
 /// Type-safe API paths
 enum ApiRoute {

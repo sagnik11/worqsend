@@ -1,4 +1,4 @@
-const BASE_URL = '/api/localsend/v2';
+const BASE_URL = '/api/worqsend/v2';
 
 let i18n = {};
 let sessionId = sessionStorage.getItem('sessionId');
