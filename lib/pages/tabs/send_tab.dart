@@ -242,7 +242,7 @@ class _SendTabState extends ConsumerState<SendTab> {
           const Padding(
             padding: EdgeInsets.only(bottom: 10, left: _horizontalPadding, right: _horizontalPadding),
             child: Opacity(
-              opacity: 0.3,
+              opacity: 0.8,
               child: DevicePlaceholderListTile(),
             ),
           ),
@@ -287,7 +287,7 @@ class _SendTabState extends ConsumerState<SendTab> {
           child: OpacitySlideshow(
             durationMillis: 6000,
             children: [
-              Text(t.sendTab.help, style: const TextStyle(color: Colors.grey), textAlign: TextAlign.center),
+              Text(t.sendTab.help, style: const TextStyle(color: Colors.redAccent), textAlign: TextAlign.center),
               if (checkPlatformCanReceiveShareIntent())
                 Text(t.sendTab.shareIntentInfo, style: const TextStyle(color: Colors.grey), textAlign: TextAlign.center),
             ],
@@ -352,7 +352,7 @@ class _ScanButton extends ConsumerWidget {
 
     if (ips.length <= ScanFacade.maxInterfaces) {
       return RotatingWidget(
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 1),
         spinning: scanningIps.isNotEmpty,
         reverse: true,
         child: CustomIconButton(
@@ -389,7 +389,7 @@ class _ScanButton extends ConsumerWidget {
         reverse: true,
         child: const Padding(
           padding: EdgeInsets.all(8),
-          child: Icon(Icons.sync),
+          child: Icon(Icons.refresh),
         ),
       ),
     );
@@ -431,9 +431,6 @@ class _SendModeButton extends StatelessWidget {
           case 1:
             onSelect(SendMode.multiple);
             break;
-          case 2:
-            onSelect(SendMode.link);
-            break;
           case -1:
             await showDialog(context: context, builder: (_) => const SendModeHelpDialog());
             break;
@@ -453,7 +450,7 @@ class _SendModeButton extends StatelessWidget {
                     maintainSize: true,
                     maintainAnimation: true,
                     maintainState: true,
-                    child: const Icon(Icons.check_circle),
+                    child: const Icon(Icons.send_and_archive_sharp),
                   );
                 },
               ),
@@ -475,7 +472,7 @@ class _SendModeButton extends StatelessWidget {
                     maintainSize: true,
                     maintainAnimation: true,
                     maintainState: true,
-                    child: const Icon(Icons.check_circle),
+                    child: const Icon(Icons.send_and_archive_sharp),
                   );
                 },
               ),
@@ -494,7 +491,7 @@ class _SendModeButton extends StatelessWidget {
                 maintainSize: true,
                 maintainAnimation: true,
                 maintainState: true,
-                child: Icon(Icons.check_circle),
+                child: Icon(Icons.send_and_archive_sharp),
               ),
               const SizedBox(width: 10),
               Text(t.sendTab.sendModes.link),
@@ -507,7 +504,7 @@ class _SendModeButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.help),
+              const Icon(Icons.question_answer),
               const SizedBox(width: 10),
               Text(t.sendTab.sendModeHelp),
             ],
@@ -516,7 +513,7 @@ class _SendModeButton extends StatelessWidget {
       ],
       child: const Padding(
         padding: EdgeInsets.all(8),
-        child: Icon(Icons.settings),
+        child: Icon(Icons.send_rounded),
       ),
     );
   }

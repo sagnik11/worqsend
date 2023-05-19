@@ -187,7 +187,7 @@ class _ReceiveTagState extends ConsumerState<ReceiveTab> with AutomaticKeepAlive
                       onPressed: () async {
                         await context.push(() => const ReceiveHistoryPage());
                       },
-                      child: const Icon(Icons.history),
+                      child: const Icon(Icons.manage_history),
                     ),
                   ),
                 CustomIconButton(
@@ -206,7 +206,7 @@ class _ReceiveTagState extends ConsumerState<ReceiveTab> with AutomaticKeepAlive
                       });
                     }
                   },
-                  child: const Icon(Icons.info),
+                  child: const Icon(Icons.lightbulb),
                 ),
               ],
             ),

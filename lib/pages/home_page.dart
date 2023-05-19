@@ -14,9 +14,9 @@ import 'package:WorqSend_app/theme.dart';
 import 'package:WorqSend_app/widget/responsive_builder.dart';
 
 enum HomeTab {
-  receive(Icons.wifi),
-  send(Icons.send),
-  settings(Icons.settings);
+  receive(Icons.markunread_mailbox),
+  send(Icons.send_time_extension),
+  settings(Icons.admin_panel_settings);
 
   const HomeTab(this.icon);
 

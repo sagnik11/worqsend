@@ -21,6 +21,7 @@ enum FilePickerOption {
   file(Icons.description),
   folder(Icons.folder),
   media(Icons.image),
+  video(Icons.video_camera_front),
   text(Icons.subject),
   app(Icons.apps);
 
@@ -36,6 +37,8 @@ enum FilePickerOption {
         return t.sendTab.picker.folder;
       case FilePickerOption.media:
         return t.sendTab.picker.media;
+      case FilePickerOption.video:
+        return t.sendTab.picker.video;
       case FilePickerOption.text:
         return t.sendTab.picker.text;
       case FilePickerOption.app:
@@ -50,6 +53,7 @@ enum FilePickerOption {
       // The file app is very limited.
       return [
         FilePickerOption.media,
+        FilePickerOption.video,
         FilePickerOption.text,
         FilePickerOption.file,
         FilePickerOption.folder,
@@ -59,6 +63,7 @@ enum FilePickerOption {
       return [
         FilePickerOption.file,
         FilePickerOption.media,
+        FilePickerOption.video,
         FilePickerOption.text,
         FilePickerOption.folder,
         FilePickerOption.app,
@@ -155,6 +160,31 @@ enum FilePickerOption {
                 files: result,
                 converter: CrossFileConverters.convertAssetEntity,
               );
+        }
+        break;
+      case FilePickerOption.video:
+        final oldBrightness = Theme.of(context).brightness;
+        final List<AssetEntity>? result = await AssetPicker.pickAssets(
+          context,
+          pickerConfig: const AssetPickerConfig(
+              maxAssets: 99,
+              textDelegate: TranslatedAssetPickerTextDelegate()
+          ),
+        );
+
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          // restore brightness for Android
+          await sleepAsync(500);
+          if (context.mounted) {
+            await updateSystemOverlayStyleWithBrightness(oldBrightness);
+          }
+        });
+
+        if (result != null) {
+          await ref.read(selectedSendingFilesProvider.notifier).addFiles(
+            files: result,
+            converter: CrossFileConverters.convertAssetEntity,
+          );
         }
         break;
       case FilePickerOption.text:

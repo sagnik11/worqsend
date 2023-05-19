@@ -16,7 +16,7 @@ class DiscoveryDebugPage extends ConsumerWidget {
     final logs = ref.watch(discoveryLogsProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Discovery Debugging'),
+        title: const Text('Server Requests'),
       ),
       body: ResponsiveListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -25,7 +25,7 @@ class DiscoveryDebugPage extends ConsumerWidget {
             children: [
               ElevatedButton(
                 onPressed: () => ref.read(nearbyDevicesProvider.notifier).startMulticastScan(),
-                child: const Text('Announce'),
+                child: const Text('Resend Requests'),
               ),
               const SizedBox(width: 20),
               ElevatedButton(

@@ -24,7 +24,7 @@ class ChangelogPage extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 15,
               right: 15,
-              top: 15,
+              top: 45,
               bottom: 15 + getNavBarPadding(context),
             ),
             data: data.data!,

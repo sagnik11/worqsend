@@ -18,7 +18,7 @@ import 'package:WorqSend_app/widget/custom_dropdown_button.dart';
 import 'package:WorqSend_app/widget/dialogs/encryption_disabled_notice.dart';
 import 'package:WorqSend_app/widget/dialogs/quick_save_notice.dart';
 import 'package:WorqSend_app/widget/dialogs/text_field_tv.dart';
-import 'package:WorqSend_app/widget/local_send_logo.dart';
+import 'package:WorqSend_app/widget/worq_send_logo.dart';
 import 'package:WorqSend_app/widget/responsive_list_view.dart';
 import 'package:routerino/routerino.dart';
 

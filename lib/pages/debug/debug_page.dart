@@ -37,22 +37,22 @@ class DebugPage extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
           const Text('More', style: DebugEntry.headerStyle),
-          const SizedBox(height: 5),
+          const SizedBox(height: 15),
           Wrap(
             spacing: 10,
             runSpacing: 10,
             children: [
               ElevatedButton(
                 onPressed: () async => context.push(() => const SecurityDebugPage()),
-                child: const Text('Security'),
+                child: const Text('Device Certificates & Authentication'),
               ),
               ElevatedButton(
                 onPressed: () async => context.push(() => const DiscoveryDebugPage()),
-                child: const Text('Discovery'),
+                child: const Text('Server Requests'),
               ),
               ElevatedButton(
                 onPressed: () async => context.push(() => const HttpLogsPage()),
-                child: const Text('HTTP Logs'),
+                child: const Text('Transfer & System Logs'),
               ),
             ],
           ),

@@ -15,7 +15,7 @@ class HttpLogsPage extends ConsumerWidget {
     final logs = ref.watch(httpLogsProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HTTP Logs'),
+        title: const Text('Transfer & System Logs'),
       ),
       body: ResponsiveListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),

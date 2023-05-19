@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:WorqSend_app/gen/strings.g.dart';
 import 'package:WorqSend_app/pages/debug/debug_page.dart';
-import 'package:WorqSend_app/widget/local_send_logo.dart';
+import 'package:WorqSend_app/widget/worq_send_logo.dart';
 import 'package:WorqSend_app/widget/responsive_list_view.dart';
 import 'package:routerino/routerino.dart';
 import 'package:url_launcher/url_launcher.dart';

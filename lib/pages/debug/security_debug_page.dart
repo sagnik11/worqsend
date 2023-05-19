@@ -12,7 +12,7 @@ class SecurityDebugPage extends ConsumerWidget {
     final securityContext = ref.watch(securityProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Security Debugging'),
+        title: const Text('Device Security and Authentication'),
       ),
       body: ResponsiveListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -22,7 +22,7 @@ class SecurityDebugPage extends ConsumerWidget {
             children: [
               ElevatedButton(
                 onPressed: () async => ref.read(securityProvider.notifier).reset(),
-                child: const Text('Reset'),
+                child: const Text('Reset Security (Dev only)'),
               ),
             ],
           ),
